@@ -21,10 +21,10 @@ class DeckView extends React.Component {
                 <Text>{deck.item.title}</Text>
                 <Text>{deck.item.cards.length +" Cards"}</Text>
 
-                <TouchableOpacity style={styles.btn_add_card}>
+                <TouchableOpacity style={[styles.btn_small, {backgroundColor: "#84ff1a"}]}>
                     <Text>Add Card</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btn_quiz} onPress={() => { navigation.navigate('QuizCardView', {deck})}}>
+                <TouchableOpacity style={[styles.btn_small, {backgroundColor: "#daa23a"}]} onPress={() => { navigation.navigate('QuizCardView', {deck})}}>
                     <Text>Quiz</Text>
                 </TouchableOpacity>
             </View>
@@ -41,22 +41,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 10
     },
-    btn_add_card: {
+    btn_small: {
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10,
         margin: 10,
-        backgroundColor: "#84ff1a",
         borderRadius: 3
     },
-    btn_quiz: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 10,
-        margin: 10,
-        backgroundColor: "#1f5cff",
-        borderRadius: 3
-    },
+
 });
 
 

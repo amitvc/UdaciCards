@@ -5,11 +5,13 @@ import {FontAwesome,Ionicons} from '@expo/vector-icons'
 import { connect, Provider } from 'react-redux'
 import { createStore } from 'redux'
 import reducer from './reducers'
+import {setInitialState} from './reducers'
 import {purple, white} from './utils/colors'
 import DeckListView from './components/DeckListView'
 import CreateDeckView from './components/CreateDeckView'
 import DeckView from './components/DeckView'
 import QuickCardView from './components/QuizCardView'
+import {getDecks, storeDecks} from './utils/storage'
 
 
 
@@ -69,19 +71,61 @@ const TabNav =  TabNavigator({
 
 
 export default class App extends React.Component {
-  render() {
-    return (
 
-    <Provider store={createStore(reducer)}>
-        <View style={{flex:1}}>
-            <StatusBar
-                backgroundColor="blue"
-                barStyle="light-content"
-            />
-            <TabNav/>
-        </View>
-    </Provider>
-    );
+    constructor(props) {
+        super(props);
+        this.state = {
+            loading:true
+        }
+    }
+
+    componentWillMount() {
+        let initialState = {};
+        getDecks().then((value) => {
+            console.log("Loading store from asyc store");
+            console.log(value);
+            if(value !== null) {
+                console.log("Setting initial state");
+                initialState = JSON.parse(value);
+            } else {
+                console.log("Calling storeDecks");
+                storeDecks(initialStates).then((value) => {
+                    console.log("stored initial value" + value);
+                    getDecks().thead((d) => {
+                        console.log("reading back value from async"+ d);
+                        initialState = JSON.parse(d);
+                    });
+                });
+            }
+            setInitialState(initialState);
+            this.setState({loading:false});
+        })
+
+    }
+
+  render() {
+
+        if(this.state.loading) {
+            return (
+                <View style={styles.container}>
+                    <Text>Loading</Text>
+                </View>
+            )
+        } else {
+            return (
+
+                <Provider store={createStore(reducer)}>
+                    <View style={{flex:1}}>
+                        <StatusBar
+                            backgroundColor="blue"
+                            barStyle="light-content"
+                        />
+                        <TabNav/>
+                    </View>
+                </Provider>
+            )
+        }
+
   }
 }
 

@@ -4,9 +4,11 @@
 
 import * as constants from '../utils/constants'
 import uuidv1  from 'uuid/v1'
+import {getDecks, storeDecks} from '../utils/storage'
 
 
-const initialState = {
+
+const initialStates = {
     decks: {
         '15c36ce2-301f-46eb-81ac-8347d3473213': {
             id:'15c36ce2-301f-46eb-81ac-8347d3473213',
@@ -44,8 +46,17 @@ const initialState = {
 }
 
 
+let initialState = {};
 
-const reducer = (state=initialState, action) => {
+
+
+export const setInitialState = ( state) =>{
+    initialState = state;
+}
+
+
+
+const reducer = (state= initialState, action) => {
     switch(action.type) {
 
         case constants.ADD_NEW_DECK:

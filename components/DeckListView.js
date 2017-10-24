@@ -45,9 +45,10 @@ class DeckListView extends React.Component {
         let decksList = this.buildDeckList(decks);
 
         if(decksList.length === 0) {
+            return (
             <View style={{alignItems: 'center' , flex:1, paddingTop:100}}>
                 <Text>No decks found. Please add decks</Text>
-            </View>
+            </View>)
         } else {
             return (
                 <View style={styles.container}>

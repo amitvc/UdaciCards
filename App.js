@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, StatusBar , TouchableOpacity, Platform} from 'react-native'
+import { StyleSheet, Text, View, StatusBar , Platform} from 'react-native'
 import {TabNavigator, StackNavigator} from 'react-navigation'
 import {FontAwesome,Ionicons} from '@expo/vector-icons'
 import { connect, Provider } from 'react-redux'
@@ -9,6 +9,7 @@ import {purple, white} from './utils/colors'
 import DeckListView from './components/DeckListView'
 import CreateDeckView from './components/CreateDeckView'
 import DeckView from './components/DeckView'
+import QuickCardView from './components/QuizCardView'
 
 
 
@@ -20,6 +21,10 @@ const StackNav = StackNavigator({
 
     DeckView : {
         screen : DeckView
+    },
+
+    QuizCardView : {
+        screen : QuickCardView
     }
 
 });

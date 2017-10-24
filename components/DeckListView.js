@@ -19,9 +19,8 @@ class DeckListView extends React.Component {
 
 
     createDeckListItem(obj) {
-        console.log(this);
         return (
-        <TouchableHighlight style={styles.deckItemBtn} onPress={() => this.props.navigation.navigate('DeckView')}>
+        <TouchableHighlight style={styles.deckItemBtn} onPress={() => this.props.navigation.navigate('DeckView', {deck:obj})}>
             <View style={styles.deckItemView}>
                 <Text style={{textAlign:'center'}}>{obj.item.title}</Text>
                 <Text style={{textAlign:'center'}}>{obj.item.cards.length + " Cards"}</Text>
@@ -29,7 +28,7 @@ class DeckListView extends React.Component {
         </TouchableHighlight>)
     }
 
-    buildDeckList(decks) {
+    buildDeckList(decks, cards) {
         let decksList = [];
         if(decks !== undefined) {
             Object.keys(decks).forEach((deck_id, index) => {
@@ -42,7 +41,7 @@ class DeckListView extends React.Component {
 
     render() {
         const {decks} = this.props;
-        console.log(this.props);
+
         let decksList = this.buildDeckList(decks);
 
         if(decksList.length === 0) {
@@ -61,12 +60,6 @@ class DeckListView extends React.Component {
                 </View>
             )
         }
-    }
-}
-
-const mapStateToProps  = ({decks}) => {
-    return {
-        decks
     }
 }
 
@@ -111,4 +104,9 @@ const styles = StyleSheet.create({
     }
 });
 
+const mapStateToProps  = ({decks}) => {
+    return {
+        decks
+    }
+}
 export default  connect(mapStateToProps, null)(DeckListView);

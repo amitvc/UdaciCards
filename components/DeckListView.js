@@ -20,7 +20,7 @@ class DeckListView extends React.Component {
 
     createDeckListItem(obj) {
         return (
-        <TouchableHighlight style={styles.deckItemBtn} onPress={() => this.props.navigation.navigate('DeckView', {deck:obj})}>
+        <TouchableHighlight style={styles.deckItemBtn} onPress={() => this.props.navigation.navigate('DeckView', {id:obj.item.id})}>
             <View style={styles.deckItemView}>
                 <Text style={{textAlign:'center'}}>{obj.item.title}</Text>
                 <Text style={{textAlign:'center'}}>{obj.item.cards.length + " Cards"}</Text>

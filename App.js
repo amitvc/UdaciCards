@@ -2,8 +2,10 @@ import React from 'react'
 import { StyleSheet, Text, View, StatusBar , Platform} from 'react-native'
 import {TabNavigator, StackNavigator} from 'react-navigation'
 import {FontAwesome,Ionicons} from '@expo/vector-icons'
-import { connect, Provider } from 'react-redux'
-import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import thunkMiddleware from 'redux-thunk'
+
+import { createStore, applyMiddleware } from 'redux'
 import reducer from './reducers'
 import {setInitialState} from './reducers'
 import {purple, white} from './utils/colors'
@@ -11,8 +13,11 @@ import DeckListView from './components/DeckListView'
 import CreateDeckView from './components/CreateDeckView'
 import DeckView from './components/DeckView'
 import QuickCardView from './components/QuizCardView'
+import AddCardView from './components/AddCardView'
 import {getDecks, storeDecks} from './utils/storage'
-
+import { AsyncStorage } from 'react-native'
+import { Notifications, Permissions } from 'expo'
+import {NOTIFICATION_KEY} from './utils/constants'
 
 
 const StackNav = StackNavigator({
@@ -27,6 +32,9 @@ const StackNav = StackNavigator({
 
     QuizCardView : {
         screen : QuickCardView
+    },
+    AddCard : {
+        screen :AddCardView
     }
 
 });
@@ -67,10 +75,43 @@ const TabNav =  TabNavigator({
 })
 
 
-
+const default_initialState = {
+    decks:{},
+    cards:{}
+}
 
 
 export default class App extends React.Component {
+
+     setLocalNotification() {
+        AsyncStorage.getItem(NOTIFICATION_KEY)
+            .then((data) => {
+                if(data === null) {
+                    Permissions.askAsync(Permissions.NOTIFICATIONS)
+                        .then(({ status }) => {
+                            if(status === 'granted') {
+                                Notifications.cancelAllScheduledNotificationsAsync()
+                                let tomorrow = new Date()
+                                tomorrow.setDate(tomorrow.getDate() + 1)
+                                tomorrow.setHours(20)
+                                tomorrow.setMinutes(0)
+                                Notifications.scheduleLocalNotificationAsync(
+                                    createNotification(), {time: tomorrow, repeat: 'day'}
+                                )
+                                AsyncStorage.setItem(NOTIFICATION_KEY, "true")
+                            }
+                        })
+                }
+            })
+            .catch((error) => {
+                console.log("Error With Notifications - ", error);
+            })
+    }
+
+    componentDidMount() {
+         this.setLocalNotification();
+    }
+
 
     constructor(props) {
         super(props);
@@ -82,17 +123,12 @@ export default class App extends React.Component {
     componentWillMount() {
         let initialState = {};
         getDecks().then((value) => {
-            console.log("Loading store from asyc store");
-            console.log(value);
             if(value !== null) {
-                console.log("Setting initial state");
                 initialState = JSON.parse(value);
             } else {
-                console.log("Calling storeDecks");
-                storeDecks(initialStates).then((value) => {
-                    console.log("stored initial value" + value);
+                console.log("Initial state from async store is null. Will save default initial state " + default_initialState);
+                storeDecks(default_initialState).then((value) => {
                     getDecks().thead((d) => {
-                        console.log("reading back value from async"+ d);
                         initialState = JSON.parse(d);
                     });
                 });
@@ -114,7 +150,7 @@ export default class App extends React.Component {
         } else {
             return (
 
-                <Provider store={createStore(reducer)}>
+                <Provider store={createStore(reducer, applyMiddleware(thunkMiddleware))}>
                     <View style={{flex:1}}>
                         <StatusBar
                             backgroundColor="blue"

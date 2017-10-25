@@ -3,6 +3,8 @@
  */
 
 import * as constants from '../utils/constants';
+import {getDecks, storeDecks} from '../utils/storage'
+
 
 
 /**
@@ -17,6 +19,45 @@ export function addNewCard(deckId, card) {
         card,
         deckId
     }
+}
+
+
+export const addNewCardToAsyncStorage = (deckId, card) => dispatch => {
+    getDecks().then((value) => {
+        if(value != null) {
+            currentAsyncState = JSON.parse(value);
+            currentAsyncState.decks[deckId].cards.push(card.id);
+            currentAsyncState.cards[card.id] = card;
+            storeDecks(currentAsyncState).then(() => {
+                dispatch(addNewCard(deckId, card));
+            })
+        }
+    })
+}
+
+
+/**
+ * Function responsible for storing deck in asyn storage and also update redux state
+ * by dispatch addNewDeck action.
+ * @param deck
+ */
+export const addNewDeckToAsyncStorage = (deck)  => dispatch => {
+
+    getDecks().then((value) => {
+        if(value !== null) {
+            currentAsyncState = JSON.parse(value);
+            currentAsyncState.decks[deck.id] = deck;
+            storeDecks(currentAsyncState).then((value) => {
+            })
+        } else {
+            let initialState = {cards:{}, decks:{}};
+            initialState.decks[deck.id] = deck;
+            storeDecks(initialState).then((value) => {
+            })
+        }
+        dispatch(addNewDeck(deck));
+    })
+
 }
 
 /**

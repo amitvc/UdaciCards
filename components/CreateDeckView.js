@@ -5,6 +5,11 @@
 import React from 'react'
 import {View, Text,StyleSheet,TouchableOpacity,TextInput, Dimensions} from 'react-native'
 import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux';
+import {addNewDeckToAsyncStorage} from '../actions'
+import  uuidv1  from 'uuid/v1'
+
+
 
 
 class CreateDeckView extends React.Component {
@@ -17,6 +22,16 @@ class CreateDeckView extends React.Component {
         }
     }
 
+    onSubmit() {
+        if(this.state.title === "" || this.state.title.length <=0) {
+            alert("Please enter title for deck");
+        } else {
+            const newDeck = {id:uuidv1(), title: this.state.title, cards:[]};
+            this.props.addNewDeckToAsyncStorage(newDeck);
+            this.props.navigation.navigate('Decks');
+        }
+    }
+
     render() {
         return (
 
@@ -24,9 +39,10 @@ class CreateDeckView extends React.Component {
 
                 <Text style={styles.text_bold}> What is the title of your new deck?</Text>
                 <TextInput style={styles.text_field} placeholder="Title"
-                           value={this.state.title}/>
+                           value={this.state.title}
+                           onChangeText={(text) => this.setState({title:text})}/>
 
-                <TouchableOpacity style={styles.btn_submit} onPress={() => this.checkInput()}>
+                <TouchableOpacity style={styles.btn_submit} onPress={() => this.onSubmit()}>
                     <Text>Submit</Text>
                 </TouchableOpacity>
             </View>
@@ -70,6 +86,11 @@ const styles = StyleSheet.create({
     },
 });
 
+const mapDispatchToPros = (dispatch) => {
+    return {
+        addNewDeckToAsyncStorage: bindActionCreators(addNewDeckToAsyncStorage,dispatch)
+    }
+}
 
 
-export default  CreateDeckView;
+export default connect(null, mapDispatchToPros)(CreateDeckView);

@@ -16,8 +16,7 @@ class QuizCardView extends React.Component {
 
     constructor(props){
         super(props);
-
-        let cards = this.getCurrentCard(this.props.cards, this.props.navigation.state.params.deck.item.cards);
+        let cards = this.getCurrentCard(this.props.cards, this.props.navigation.state.params.deck.cards);
 
         // This component will maintain internal state.
         this.state = {
@@ -25,7 +24,7 @@ class QuizCardView extends React.Component {
             cards,
             right:0,
             wrong:0,
-            title: this.props.navigation.state.params.deck.item.title,
+            title: this.props.navigation.state.params.deck.title,
             hintAnswer:""
         }
     }
@@ -63,7 +62,6 @@ class QuizCardView extends React.Component {
 
 
     render() {
-        console.log(JSON.stringify(this.state));
             if(this.state.currentIndex < this.state.cards.length) {
                 return (
                 <View style={styles.container}>

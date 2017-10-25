@@ -4,6 +4,7 @@
 
 import React from 'react'
 import {View, Text, StyleSheet,TouchableOpacity} from 'react-native'
+import {connect} from 'react-redux'
 
 
 
@@ -13,15 +14,16 @@ import {View, Text, StyleSheet,TouchableOpacity} from 'react-native'
 class DeckView extends React.Component {
 
     render() {
-        const {deck} = this.props.navigation.state.params;
+        const deckId = this.props.navigation.state.params.id;
         const {navigation} = this.props;
+        const deck = this.props.decks[deckId];
         return(
         <View style={styles.container}>
             <View style={{alignItems: 'center', paddingTop: 20}}>
-                <Text>{deck.item.title}</Text>
-                <Text>{deck.item.cards.length +" Cards"}</Text>
+                <Text>{deck.title}</Text>
+                <Text>{deck.cards.length +" Cards"}</Text>
 
-                <TouchableOpacity style={[styles.btn_small, {backgroundColor: "#84ff1a"}]}>
+                <TouchableOpacity style={[styles.btn_small, {backgroundColor: "#84ff1a"}]} onPress={() => { navigation.navigate('AddCard', {id:deck.id})}}>
                     <Text>Add Card</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.btn_small, {backgroundColor: "#daa23a"}]} onPress={() => { navigation.navigate('QuizCardView', {deck})}}>
@@ -52,5 +54,10 @@ const styles = StyleSheet.create({
 });
 
 
+const mapStateToProps = ({decks}) => {
+    return {
+        decks
+    }
+}
 
-export default DeckView;
+export default connect(mapStateToProps)(DeckView);
